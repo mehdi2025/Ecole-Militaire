@@ -114,7 +114,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 # Keycloak OIDC settings
 OIDC_RP_CLIENT_ID = 'django-app'  # Your client ID
-OIDC_RP_CLIENT_SECRET = 'your-client-secret'  # Your client secret
+OIDC_RP_CLIENT_SECRET = 'oLrf6G696eaM1H4uFbd9DZXa6z2ryuWl'  # Your client secret
 OIDC_OP_AUTHORIZATION_ENDPOINT = 'http://193.95.31.111:30203/auth/realms/master/protocol/openid-connect/auth'
 OIDC_OP_TOKEN_ENDPOINT = 'http://193.95.31.111:30203/auth/realms/master/protocol/openid-connect/token'
 OIDC_OP_USER_ENDPOINT = 'http://193.95.31.111:30203/auth/realms/master/protocol/openid-connect/userinfo'
