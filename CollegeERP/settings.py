@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'djoser',
     'rest_framework.authtoken',
     'apis',
-    'mozilla_django_oidc',
 
 ]
 
@@ -93,10 +92,6 @@ DATABASES = {
 # Password validation
 # https://docs.djangoproject.com/en/2.1/ref/settings/#auth-password-validators
 
-AUTHENTICATION_BACKENDS = (
-    'CollegeERP.auth.KeycloakOIDCAuthenticationBackend',  # Custom backend
-)
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -111,61 +106,6 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
-
-# Keycloak OIDC settings
-OIDC_RP_CLIENT_ID = 'django-app'  # Your client ID
-OIDC_RP_CLIENT_SECRET = 'oLrf6G696eaM1H4uFbd9DZXa6z2ryuWl'  # Your client secret
-OIDC_OP_AUTHORIZATION_ENDPOINT = 'http://193.95.31.111:30203/auth/realms/master/protocol/openid-connect/auth'
-OIDC_OP_TOKEN_ENDPOINT = 'http://193.95.31.111:30203/auth/realms/master/protocol/openid-connect/token'
-OIDC_OP_USER_ENDPOINT = 'http://193.95.31.111:30203/auth/realms/master/protocol/openid-connect/userinfo'
-OIDC_OP_JWKS_ENDPOINT = 'http://193.95.31.111:30203/auth/realms/master/protocol/openid-connect/certs'
-OIDC_OP_LOGOUT_ENDPOINT = 'http://193.95.31.111:30203/auth/realms/master/protocol/openid-connect/logout'
-
-# Login and logout settings
-LOGIN_REDIRECT_URL = '/'
-LOGOUT_REDIRECT_URL = '/'
-LOGIN_URL = '/oidc/authenticate/'
-
-# OIDC session settings
-OIDC_RENEW_ID_TOKEN_EXPIRY_SECONDS = 600
-OIDC_STORE_ACCESS_TOKEN = True
-OIDC_STORE_ID_TOKEN = True
-
-# Add logging configuration
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'verbose': {
-            'format': '{levelname} {asctime} {module} {message}',
-            'style': '{',
-        },
-    },
-    'handlers': {
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'verbose',
-        },
-        'file': {
-            'level': 'DEBUG',
-            'class': 'logging.FileHandler',
-            'filename': 'debug.log',
-            'formatter': 'verbose',
-        },
-    },
-    'loggers': {
-        'mozilla_django_oidc': {
-            'handlers': ['console', 'file'],
-            'level': 'DEBUG',
-        },
-        'CollegeERP.auth': {
-            'handlers': ['console', 'file'],
-            'level': 'DEBUG',
-        },
-    },
-}
-
 
 
 # Internationalization
