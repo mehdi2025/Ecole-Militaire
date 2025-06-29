@@ -44,11 +44,19 @@ class InfoTest(TestCase):
         dept = self.create_dept(id=dept_id) # Use the helper to get/create department
         return Teacher.objects.get_or_create(user=user, id=id, defaults={'name': name, 'dept': dept})[0]
 
-    def create_assign(self, class_id='CS5A', course_id='CS510', teacher_id='TCH001'):
+    def create_assign(self, class_id='CS5A', course_id='CS510', teacher_obj=None, teacher_id='TCH001'):
         cl = self.create_class(id=class_id)
         cr = self.create_course(id=course_id)
-        t = self.create_teacher(id=teacher_id)
+        
+        if teacher_obj is None:
+            t = self.create_teacher(id=teacher_id)
+        else:
+            t = teacher_obj # Use the provided teacher object
+
         return Assign.objects.get_or_create(class_id=cl, course=cr, teacher=t)[0]
+
+    # ... (rest of your InfoTest class) ...
+
 
     def create_attendance_class(self, assign_obj=None, class_id='CS5A', course_id='CS510', teacher_id='TCH001', date='2025-01-01'):
         # If assign_obj is not provided, create one
@@ -174,20 +182,19 @@ class InfoTest(TestCase):
         s = self.student_profile
         cr = self.create_course(id='CHEM101_TEST', name='Chemistry Test', shortname='CHEM_T')
 
-        # Create AttendanceClass before Attendance if Attendance has a foreign key to AttendanceClass
-        # Assuming AttendanceClass needs an 'assign' and a 'date' field
-        assign = self.create_assign(class_id=s.class_id.id, course_id=cr.id, teacher_id=self.teacher_profile.id)
-        att_class = self.create_attendance_class(assign_obj=assign, date='2025-06-29') # Pass the assign object
+        # Pass the existing teacher_profile object directly
+        assign = self.create_assign(
+            class_id=s.class_id.id,
+            course_id=cr.id,
+            teacher_obj=self.teacher_profile # Pass the object here
+        )
+        att_class = self.create_attendance_class(assign_obj=assign, date='2025-06-29')
 
-        # Now create Attendance, linking it to the created AttendanceClass
-        # You MUST verify the field name for the foreign key from Attendance to AttendanceClass
-        # I'm assuming it's 'attendanceClass' based on your previous code.
         Attendance.objects.create(student=s, course=cr, attendanceClass=att_class)
 
         self.client.login(username='student_user_setup', password='student_password')
         resp = self.client.get(reverse('attendance_detail', args=(s.USN, cr.id)))
         self.assertEqual(resp.status_code, 200)
-        # Corrected typo: assertQuerySetEqual
         self.assertQuerySetEqual(resp.context['att_list'], ['<Attendance: ' + s.name + ' : ' + cr.shortname + '>'])
 
     # teacher views (uncomment and fix as needed)
