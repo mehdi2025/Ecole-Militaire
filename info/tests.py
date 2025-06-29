@@ -117,7 +117,7 @@ class InfoTest(TestCase):
         Assign.objects.create(class_id=s.class_id, course=self.create_course(), teacher=self.create_teacher())
         response = self.client.get(reverse('attendance', args=(s.USN,)))
         self.assertEqual(response.status_code, 200)
-        self.assertQuerysetEqual(response.context['att_list'], ['<AttendanceTotal: AttendanceTotal object (1)>'])
+        self.assertQuerySetEqual(response.context['att_list'], ['<AttendanceTotal: AttendanceTotal object (1)>'])
 
     def test_no_attendance__detail(self):
         s = self.create_student()
@@ -134,7 +134,7 @@ class InfoTest(TestCase):
         self.client.login(username='test_user', password='test_password')
         resp = self.client.get(reverse('attendance_detail', args=(s.USN, cr.id)))
         self.assertEqual(resp.status_code, 200)
-        self.assertQuerysetEqual(resp.context['att_list'], ['<Attendance: ' + s.name + ' : ' + cr.shortname + '>'])
+        self.assertQuerySetEqual(resp.context['att_list'], ['<Attendance: ' + s.name + ' : ' + cr.shortname + '>'])
 
     #teacher
 
