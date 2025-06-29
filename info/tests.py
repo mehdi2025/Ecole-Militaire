@@ -3,6 +3,7 @@ from info.models import Dept, Class, Course, User, Student, Teacher, Assign, Ass
 from django.urls import reverse
 from django.test.client import Client
 from django.db.utils import IntegrityError # Import IntegrityError for potential try-except blocks if needed
+from info.models import Dept, Class, Course, User, Student, Teacher, Assign, AssignTime, AttendanceTotal, Attendance, StudentCourse, Marks, MarksClass, AttendanceClass # Add AttendanceClass here
 
 # Create your tests here.
 
@@ -155,20 +156,33 @@ class InfoTest(TestCase):
         self.assertContains(response, "student has no courses")
         self.assertEqual(response.status_code, 200)
 
-    def test_attendance_view(self):
-        s = self.student_profile
-        self.client.login(username='student_user_setup', password='student_password')
+    # In test_attendance_view
+def test_attendance_view(self):
+    s = self.student_profile
+    self.client.login(username='student_user_setup', password='student_password')
 
-        cl = s.class_id
-        cr = self.create_course(id='MATH101_TEST', name='Mathematics Test', shortname='MATH_T')
-        t = self.teacher_profile
+    cl = s.class_id
+    cr = self.create_course(id='MATH101_TEST', name='Mathematics Test', shortname='MATH_T')
+    t = self.teacher_profile
 
-        Assign.objects.create(class_id=cl, course=cr, teacher=t)
+    Assign.objects.create(class_id=cl, course=cr, teacher=t)
 
-        response = self.client.get(reverse('attendance', args=(s.USN,)))
-        self.assertEqual(response.status_code, 200)
-        # Corrected typo: assertQuerySetEqual
-        self.assertQuerySetEqual(response.context['att_list'], ['<AttendanceTotal: AttendanceTotal object (1)>'])
+    # --- NEW PART: Create the expected AttendanceTotal object(s) ---
+    # This assumes your view creates an AttendanceTotal for the student and course
+    # You need to ensure the data matches what your view would generate.
+    # For example, if your view creates one AttendanceTotal per student/course,
+    # you'd create it here.
+    # Let's assume your view creates an AttendanceTotal with student=s and course=cr
+    # You might need to adjust the other fields (total_classes, attended_classes)
+    # based on how your view populates them.
+    expected_att_total = AttendanceTotal.objects.create(student=s, course=cr, total_classes=0, attended_classes=0) # Adjust default values as needed
+
+    response = self.client.get(reverse('attendance', args=(s.USN,)))
+    self.assertEqual(response.status_code, 200)
+
+    # Now compare the QuerySet from the response context to a list containing your expected object
+    self.assertQuerySetEqual(response.context['att_list'], [expected_att_total])
+
 
     def test_no_attendance__detail(self):
         s = self.student_profile
